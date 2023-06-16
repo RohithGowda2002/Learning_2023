@@ -1,0 +1,47 @@
+#include <stdio.h>
+
+void findSmallestAndLargestDigits(int n, ...) {
+    int smallestDigit = 9;
+    int largestDigit = 0;
+
+
+    va_list args;
+    va_start(args, n);
+
+    
+    for (int i = 0; i < n; i++) {
+        int num = va_arg(args, int);
+        int temp = num;
+
+     
+        while (temp != 0) {
+            int digit = temp % 10;
+
+            if (digit < smallestDigit) {
+                smallestDigit = digit;
+            }
+
+            if (digit > largestDigit) {
+                largestDigit = digit;
+            }
+
+            temp /= 10;
+        }
+    }
+
+    va_end(args);
+
+
+    if (n < 1) {
+        printf("Not Valid\n");
+    } else {
+        printf("Smallest digit: %d\n", smallestDigit);
+        printf("Largest digit: %d\n", largestDigit);
+    }
+}
+
+int main() {
+    findSmallestAndLargestDigits(3, 8, 156, 123450);
+
+    return 0;
+}

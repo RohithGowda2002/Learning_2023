@@ -1,0 +1,18 @@
+#include <stdio.h>
+
+
+unsigned char decimalToBCD(unsigned char decimal) {
+    return ((decimal / 10) << 4) | (decimal % 10);
+}
+
+int main() {
+    unsigned char decimal = 45; 
+
+
+    unsigned char bcd = decimalToBCD(decimal);
+
+    printf("Decimal: %u\n", decimal);
+    printf("BCD: 0x%02X\n", bcd);
+
+    return 0;
+}

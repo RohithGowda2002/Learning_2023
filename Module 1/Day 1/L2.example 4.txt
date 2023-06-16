@@ -1,0 +1,39 @@
+#include <stdio.h>
+
+int bit_operations(int num, int oper_type, int pos) {
+    switch (oper_type) {
+        case 1:  
+            num |= (3 << (pos - 2));
+            break;
+        case 2:  
+            num &= ~(7 << (pos - 3));
+            break;
+        case 3: 
+            num ^= (1 << 31);
+            break;
+        default:
+            printf("Error: Invalid operation type.\n");
+            break;
+    }
+
+    return num;
+}
+
+int main() {
+    int number, operationType, position;
+
+    printf("Enter the number (32 bits): ");
+    scanf("%d", &number);
+
+    printf("Enter the operation type (1, 2, or 3): ");
+    scanf("%d", &operationType);
+
+    printf("Enter the position: ");
+    scanf("%d", &position);
+
+    int result = bit_operations(number, operationType, position);
+
+    printf("Result: %d\n", result);
+
+    return 0;
+}

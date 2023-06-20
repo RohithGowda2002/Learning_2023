@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Person {
+    char name[50];
+    int age;
+};
+
+struct Person* modifyPerson(struct Person* person) {
+    printf("Enter new name: ");
+    scanf("%s", person->name);
+
+    printf("Enter new age: ");
+    scanf("%d", &(person->age));
+
+    return person;
+}
+
+int main() {
+    struct Person* person = malloc(sizeof(struct Person));
+
+    printf("Enter name: ");
+    scanf("%s", person->name);
+
+    printf("Enter age: ");
+    scanf("%d", &(person->age));
+
+    printf("\nOriginal Details\n");
+    printf("Name: %s\n", person->name);
+    printf("Age: %d\n\n", person->age);
+
+    struct Person* modifiedPerson = modifyPerson(person);
+
+    printf("\nModified Details\n");
+    printf("Name: %s\n", modifiedPerson->name);
+    printf("Age: %d\n", modifiedPerson->age);
+
+    free(person);
+
+    return 0;
+}

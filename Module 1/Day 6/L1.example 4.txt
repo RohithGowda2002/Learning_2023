@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_LENGTH 100
+
+struct Student {
+    int rollno;
+    char name[20];
+    float marks;
+};
+
+void parseString(const char* input, struct Student* students, int numStudents) {
+    char temp[MAX_LENGTH];
+    char* token;
+    int i = 0;
+
+    strcpy(temp, input);
+    token = strtok(temp, " ");
+    while (token != NULL) {
+        if (i == numStudents) {
+            printf("Exceeded the specified number of students.\n");
+            return;
+        }
+        students[i].rollno = atoi(token);
+
+        token = strtok(NULL, " ");
+        if (token == NULL) {
+            printf("Invalid input format.\n");
+            return;
+        }
+        strncpy(students[i].name, token, sizeof(students[i].name) - 1);
+        students[i].name[sizeof(students[i].name) - 1] = '\0';
+
+        token = strtok(NULL, " ");
+        if (token == NULL) {
+            printf("Invalid input format.\n");
+            return;
+        }
+        students[i].marks = atof(token);
+
+        token = strtok(NULL, " ");
+        i++;
+    }
+}
+
+void sortStudentsByMarks(struct Student* students, int numStudents) {
+    for (int i = 0; i < numStudents - 1; i++) {
+        for (int j = 0; j < numStudents - i - 1; j++) {
+            if (students[j].marks < students[j + 1].marks) {
+                struct Student temp = students[j];
+                students[j] = students[j + 1];
+                students[j + 1] = temp;
+            }
+        }
+    }
+}
+
+int main() {
+    int numStudents;
+    char input[MAX_LENGTH];
+    
+    printf("Enter the number of students: ");
+    scanf("%d", &numStudents);
+    getchar();  // Clear the newline character from the input buffer
+
+    struct Student* students = (struct Student*)malloc(numStudents * sizeof(struct Student));
+    if (students == NULL) {
+        printf("Memory allocation failed.\n");
+        return 1;
+    }
+
+    printf("Enter the student data (rollno name marks): ");
+    fgets(input, sizeof(input), stdin);
+    input[strcspn(input, "\n")] = '\0';  
+
+    parseString(input, students, numStudents);
+
+    sortStudentsByMarks(students, numStudents);
+
+    printf("\nSorted students by marks (descending order):\n");
+    for (int i = 0; i < numStudents; i++) {
+        printf("Roll No: %d, Name: %s, Marks: %.2f\n", students[i].rollno, students[i].name, students[i].marks);
+    }
+
+    free(students);
+
+    return 0;
+}

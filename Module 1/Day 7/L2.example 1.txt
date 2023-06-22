@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_ENTRIES 100
+
+typedef struct {
+    int entryNo;
+    char sensorNo[3];
+    float temperature;
+    int humidity;
+    int light;
+    char timestamp[9];
+} LogEntry;
+
+
+int extractData(const char* filename, LogEntry logEntries[], int* numEntries) {
+    FILE* file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("Failed to open the file.\n");
+        return 0;
+    }
+
+    char line[100];
+    int count = 0;
+
+    fgets(line, sizeof(line), file);
+
+    while (fgets(line, sizeof(line), file) != NULL) {
+        LogEntry entry;
+        sscanf(line, "%d,%[^,],%f,%d,%d,%[^,]", &entry.entryNo, entry.sensorNo, &entry.temperature,
+               &entry.humidity, &entry.light, entry.timestamp);
+
+        logEntries[count] = entry;
+        count++;
+
+        if (count >= MAX_ENTRIES) {
+            printf("Reached the maximum number of entries.\n");
+            break;
+        }
+    }
+
+    *numEntries = count;
+
+    fclose(file);
+    return 1;
+}
+
+void displayData(LogEntry logEntries[], int numEntries) {
+    printf("EntryNo  SensorNo  Temperature  Humidity  Light  Timestamp\n");
+    for (int i = 0; i < numEntries; i++) {
+        LogEntry entry = logEntries[i];
+        printf("%-8d %-9s %-12.1f %-9d %-6d %s\n", entry.entryNo, entry.sensorNo,
+               entry.temperature, entry.humidity, entry.light, entry.timestamp);
+    }
+}
+
+int compareTemperature(const void* a, const void* b) {
+    LogEntry* entryA = (LogEntry*)a;
+    LogEntry* entryB = (LogEntry*)b;
+
+    if (entryA->temperature < entryB->temperature) {
+        return 1; // Swap
+    } else if (entryA->temperature > entryB->temperature) {
+        return -1;
+    } else {
+        return 0;
+    }
+}
+
+int main() {
+    LogEntry logEntries[MAX_ENTRIES];
+    int numEntries = 0;
+
+    if (!extractData("data.csv", logEntries, &numEntries)) {
+        return 1;
+    }
+
+    printf("Before sorting:\n");
+    displayData(logEntries, numEntries);
+
+    qsort(logEntries, numEntries, sizeof(LogEntry), compareTemperature);
+
+    printf("\nAfter sorting:\n");
+    displayData(logEntries, numEntries);
+
+    return 0;
+}
